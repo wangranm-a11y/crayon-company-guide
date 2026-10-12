@@ -1,0 +1,7 @@
+interface:
+  display_name: "Crayon Company Guide"
+  short_description: "从零看懂公司、岗位价值、风险与面试核验问题"
+  default_prompt: "使用 $crayon-company-guide，帮我从求职者视角看懂这家公司，并判断是否值得继续申请。"
+
+policy:
+  allow_implicit_invocation: true
