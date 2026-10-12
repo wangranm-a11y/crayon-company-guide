@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  CRAYON COMPANY GUIDE · HTML 报告模板（单公司调研）
+  ============================================================================
+  使用方法：
+  1. 复制本文件为「{公司名}_公司调研_{岗位方向}.html」。
+  2. 搜索替换 {公司名}、{岗位方向}、{调研日期}。
+  3. 按各区域的 HTML 注释指引，用调研到的真实内容替换占位符。
+  4. 不要改动 <style> 中的配色与组件 CSS；如某类图表不适用可删除对应组件，
+     但整体布局、卡片风格、导航、JS 必须保留。
+  5. 所有数字必须带日期、口径；图表下方的 chart-note 必须写解读。
+  6. 同类公司必须保留 peer-link 投递入口（target="_blank"）。
+  ============================================================================
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{公司名} · 公司调研 | {岗位方向}方向</title>
+<style>
+  :root {
+    --bg: #F7F3E8;
+    --green: #12483F;
+    --green-2: #1d5b50;
+    --pink: #F1AABD;
+    --pink-soft: #FCE7EE;
+    --ink: #183B34;
+    --muted: #6B8079;
+    --card: #FFFEF7;
+    --risk: #B85C5C;
+    --risk-soft: #FEF2F2;
+    --blue: #7FA8B8;
+    --yellow: #E8C97A;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(rgba(18,72,63,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(18,72,63,0.04) 1px, transparent 1px);
+    background-size: 26px 26px;
+    color: var(--ink);
+    line-height: 1.75;
+    padding-top: 80px;
+  }
+
+  /* ===== 固定胶囊导航（保留） ===== */
+  .nav {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    z-index: 1000; display: flex; gap: 2px; padding: 7px 10px;
+    background: rgba(247,243,232,0.78); backdrop-filter: blur(18px);
+    border-radius: 999px; box-shadow: 0 2px 14px rgba(18,72,63,0.1);
+    transition: all .3s;
+  }
+  .nav.scrolled { top: 8px; background: rgba(247,243,232,0.96); box-shadow: 0 4px 22px rgba(18,72,63,0.18); }
+  .nav a {
+    text-decoration: none; color: var(--ink); font-size: 13px;
+    padding: 6px 13px; border-radius: 999px; transition: all .2s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .nav a:hover { background: rgba(18,72,63,0.08); transform: translateY(-1px); }
+  .nav a.active { background: var(--green); color: #fff; }
+
+  .container { max-width: 1000px; margin: 0 auto; padding: 0 28px; }
+
+  /* ===== Hero 左右分栏 ===== */
+  .hero {
+    padding: 48px 0 32px;
+    display: grid; grid-template-columns: 1.3fr 1fr;
+    gap: 40px; align-items: center;
+  }
+  .hero-left .brand {
+    font-size: 12px; color: var(--muted); letter-spacing: 0.14em;
+    text-transform: uppercase; margin-bottom: 14px;
+  }
+  .hero-left h1 {
+    font-size: 48px; font-weight: 800; letter-spacing: -0.035em;
+    line-height: 1.12; color: var(--green); margin-bottom: 16px;
+  }
+  .hero-left h1 .underline {
+    background: linear-gradient(transparent 62%, var(--pink) 62%);
+    padding: 0 4px;
+  }
+  .hero-left .subtitle { font-size: 16px; color: var(--muted); margin-bottom: 20px; }
+  .hero-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .hero-tags .tag {
+    background: var(--pink-soft); color: var(--green);
+    font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 999px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .hero-visual {
+    position: relative; background: var(--green);
+    border-radius: 24px; padding: 36px 32px;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; min-height: 300px;
+    box-shadow: 8px 9px 0 rgba(18,72,63,0.3);
+  }
+  .hero-visual .hv-emoji { font-size: 56px; margin-bottom: 14px; }
+  .hero-visual .hv-title { color: var(--pink); font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+  .hero-visual .hv-desc { color: rgba(247,243,232,0.85); font-size: 13px; text-align: center; line-height: 1.8; }
+  .hero-visual .hv-deco { position: absolute; top: 16px; right: 20px; font-size: 20px; opacity: 0.5; }
+
+  /* ===== 板块 ===== */
+  .section { margin-bottom: 64px; scroll-margin-top: 90px; }
+  .section-header {
+    display: flex; align-items: center; gap: 16px; margin-bottom: 28px;
+    padding-bottom: 16px; border-bottom: 2px solid rgba(18,72,63,0.15);
+  }
+  .section-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: var(--green); color: var(--pink);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+    box-shadow: 4px 4px 0 rgba(18,72,63,0.2);
+  }
+  .section-num {
+    font-size: 13px; font-weight: 700; color: var(--pink);
+    letter-spacing: 0.15em; text-transform: uppercase;
+  }
+  .section-title { font-size: 24px; font-weight: 800; color: var(--green); letter-spacing: -0.02em; }
+
+  /* ===== 卡片 / 深色卡片 ===== */
+  .card {
+    background: var(--card); border: 1.5px solid var(--green);
+    border-radius: 16px; padding: 28px;
+  }
+  .card h3 {
+    font-size: 16px; color: var(--green); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card h3 .ic { font-size: 18px; }
+  .dark-card {
+    background: var(--green); color: var(--bg); border-radius: 16px; padding: 30px;
+  }
+  .dark-card h3 { color: var(--pink); font-size: 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .dark-card p { margin-bottom: 12px; opacity: 0.92; font-size: 14.5px; line-height: 1.75; }
+  .dark-card p:last-child { margin-bottom: 0; }
+
+  /* ===== 速览 6 小卡 ===== */
+  .overview {
+    display: grid; grid-template-columns: repeat(6, 1fr);
+    gap: 12px; margin: 32px 0 64px;
+  }
+  .ov-item {
+    background: var(--card); border: 1.5px solid var(--green);
+    border-radius: 14px; padding: 18px 14px; text-align: center;
+    box-shadow: 4px 5px 0 var(--green);
+  }
+  .ov-item .ov-ic { font-size: 24px; margin-bottom: 8px; }
+  .ov-item .ov-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+  .ov-item .ov-value { font-size: 14px; font-weight: 700; color: var(--green); line-height: 1.3; }
+
+  /* ===== 飞轮卡片 ===== */
+  .flywheel {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 14px; margin: 24px 0;
+  }
+  .fw-card {
+    background: var(--card); border: 1.5px solid var(--green);
+    border-radius: 16px; padding: 22px 18px;
+    position: relative; overflow: hidden; transition: transform .2s;
+  }
+  .fw-card:hover { transform: translateY(-3px); }
+  .fw-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 5px; background: var(--pink);
+  }
+  .fw-card .fw-emoji { font-size: 36px; margin-bottom: 10px; display: block; }
+  .fw-card .fw-name { font-size: 15px; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+  .fw-card .fw-products { font-size: 12px; color: var(--muted); line-height: 1.7; }
+  .fw-card .fw-note { font-size: 11px; color: var(--pink); margin-top: 8px; font-weight: 600; }
+
+  /* ===== 流程步骤图 ===== */
+  .flow-diagram {
+    display: flex; align-items: stretch; margin: 24px 0;
+    background: var(--card); border: 1.5px solid var(--green);
+    border-radius: 16px; overflow: hidden;
+  }
+  .flow-step {
+    flex: 1; padding: 24px 18px; text-align: center;
+    border-right: 2px dashed rgba(18,72,63,0.2);
+  }
+  .flow-step:last-child { border-right: none; }
+  .flow-step .fs-num {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--green); color: var(--pink);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; margin: 0 auto 10px;
+  }
+  .flow-step .fs-emoji { font-size: 28px; margin-bottom: 8px; }
+  .flow-step .fs-title { font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
+  .flow-step .fs-desc { font-size: 12px; color: var(--muted); line-height: 1.65; }
+
+  /* ===== 图表卡片 ===== */
+  .chart-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; margin: 24px 0;
+  }
+  .chart-card {
+    background: var(--card); border: 1.5px solid var(--green);
+    border-radius: 16px; padding: 26px;
+  }
+  .chart-card .chart-title {
+    font-size: 14px; font-weight: 700; color: var(--green);
+    margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+  }
+  .chart-card .chart-title .ic { font-size: 18px; }
+  .chart-card .chart-note {
+    font-size: 12px; color: var(--muted); margin-top: 14px;
+    padding-top: 12px; border-top: 1px dashed rgba(18,72,63,0.15);
+    line-height: 1.6;
+  }
+
+  /* ===== 环形图 ===== */
+  .donut-wrapper { display: flex; align-items: center; gap: 18px; }
+  .donut {
+    width: 130px; height: 130px; border-radius: 50%;
+    position: relative; flex-shrink: 0;
+    /* 按占比调整 conic-gradient 的角度（总 360deg） */
+    background: conic-gradient(
+      var(--green) 0deg 194deg,
+      var(--pink) 194deg 266deg,
+      var(--blue) 266deg 316deg,
+      var(--yellow) 316deg 360deg
+    );
+  }
+  .donut::before {
+    content: ''; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--card);
+  }
+  .donut-center {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center; z-index: 2;
+  }
+  .donut-center .dc-num { font-size: 16px; font-weight: 800; color: var(--green); }
+  .donut-center .dc-label { font-size: 9px; color: var(--muted); }
+  .legend { flex: 1; }
+  .legend-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 0; font-size: 12px;
+  }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .legend-item .l-name { color: var(--ink); }
+  .legend-item .l-val { margin-left: auto; color: var(--green); font-weight: 700; }
+
+  /* ===== 柱状图 ===== */
+  .bar-chart {
+    display: flex; align-items: flex-end; justify-content: space-around;
+    height: 170px; padding: 0 10px; gap: 12px;
+  }
+  .bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .bar {
+    width: 100%; max-width: 40px; border-radius: 6px 6px 0 0;
+    position: relative; min-height: 4px;
+  }
+  .bar.pink { background: var(--pink); }
+  .bar.green { background: var(--green); }
+  .bar .bar-val {
+    position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; font-weight: 700; color: var(--green); white-space: nowrap;
+  }
+  .bar-label { font-size: 11px; color: var(--muted); text-align: center; }
+
+  /* ===== 进度条 ===== */
+  .progress-list { display: flex; flex-direction: column; gap: 14px; }
+  .progress-item .pr-head {
+    display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px;
+  }
+  .progress-item .pr-name { color: var(--ink); font-weight: 600; }
+  .progress-item .pr-val { color: var(--green); font-weight: 700; }
+  .progress-track {
+    height: 12px; background: rgba(18,72,63,0.1); border-radius: 6px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; border-radius: 6px;
+    background: linear-gradient(90deg, var(--green), var(--green-2));
+  }
+  .progress-fill.pink { background: linear-gradient(90deg, var(--pink), #e895a9); }
+  .progress-fill.blue { background: linear-gradient(90deg, var(--blue), #6b93a3); }
+
+  /* ===== 人物卡片 ===== */
+  .people-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .person-card {
+    background: var(--card); border: 1.5px solid var(--green);
+    border-radius: 16px; padding: 26px;
+    display: flex; gap: 18px; align-items: flex-start;
+  }
+  .person-avatar {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--green); color: var(--pink);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; flex-shrink: 0;
+  }
+  .person-info .p-name { font-size: 17px; font-weight: 700; color: var(--green); }
+  .person-info .p-title { font-size: 12px; color: var(--pink); font-weight: 600; margin-bottom: 10px; }
+  .person-info .p-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+  /* ===== 时间线 ===== */
+  .timeline {
+    position: relative; padding-left: 32px; margin: 20px 0;
+  }
+  .timeline::before {
+    content: ''; position: absolute; left: 11px; top: 8px; bottom: 8px;
+    width: 3px; background: linear-gradient(180deg, var(--pink), var(--green));
+    border-radius: 2px;
+  }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-item:last-child { margin-bottom: 0; }
+  .tl-dot {
+    position: absolute; left: -27px; top: 4px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--card); border: 3px solid var(--green);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+  }
+  .tl-item .tl-year { font-size: 14px; font-weight: 700; color: var(--green); }
+  .tl-item .tl-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+  /* 时间线放在深色卡片内时，年份和正文改为浅色 */
+  .dark-card .tl-item .tl-year { color: var(--pink); }
+  .dark-card .tl-item .tl-text { color: rgba(247,243,232,0.85); }
+
+  /* ===== 岗位卡片 ===== */
+  .role-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .role-card {
+    background: var(--card); border: 1.5px solid var(--green);
+    border-radius: 16px; padding: 22px;
+    display: flex; flex-direction: column;
+  }
+  .role-card .rc-top {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+  }
+  .role-card .rc-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--pink-soft); display: flex;
+    align-items: center; justify-content: center; font-size: 22px;
+  }
+  .role-card .rc-name { font-size: 14px; font-weight: 700; color: var(--green); line-height: 1.3; }
+  .role-card .rc-team {
+    font-size: 11px; color: var(--pink); font-weight: 600;
+    margin-bottom: 10px; display: flex; align-items: center; gap: 4px;
+  }
+  .role-card .rc-desc { font-size: 12.5px; color: var(--muted); line-height: 1.7; margin-bottom: 12px; flex: 1; }
+  .role-card .rc-skills { display: flex; flex-wrap: wrap; gap: 4px; }
+  .role-card .rc-skill {
+    font-size: 10px; background: rgba(18,72,63,0.08);
+    color: var(--green); padding: 2px 8px; border-radius: 4px;
+  }
+
+  /* ===== 机会 / 风险 ===== */
+  .opp-risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .or-col h3 {
+    font-size: 17px; font-weight: 700; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .or-col.opp h3 { color: var(--green); }
+  .or-col.risk h3 { color: var(--risk); }
+  .or-card {
+    background: var(--card); border: 1.5px solid var(--green);
+    border-radius: 14px; padding: 18px 20px; margin-bottom: 12px;
+    display: flex; gap: 14px; align-items: flex-start;
+  }
+  .or-card .or-ic {
+    width: 40px; height: 40px; border-radius: 12px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; background: var(--pink-soft);
+  }
+  .or-card.risk .or-ic { background: var(--risk-soft); }
+  .or-card .or-title { font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 5px; }
+  .or-card.risk .or-title { color: var(--risk); }
+  .or-card .or-desc { font-size: 12.5px; color: var(--muted); line-height: 1.65; }
+
+  /* ===== 最终判断 ===== */
+  .verdict-box {
+    background: var(--green); border-radius: 20px;
+    padding: 40px; display: grid;
+    grid-template-columns: 1fr 1.2fr; gap: 36px; align-items: center;
+  }
+  .verdict-left { text-align: center; }
+  .verdict-left .vl-emoji { font-size: 52px; margin-bottom: 12px; }
+  .verdict-left .vl-label { font-size: 11px; color: rgba(247,243,232,0.6); letter-spacing: .15em; text-transform: uppercase; }
+  .verdict-left .vl-text { font-size: 30px; font-weight: 800; color: var(--pink); margin: 8px 0 12px; }
+  .verdict-left .vl-desc { font-size: 13px; color: rgba(247,243,232,0.85); line-height: 1.75; }
+  .verdict-right {
+    background: rgba(255,255,255,0.08); border-radius: 14px; padding: 24px;
+  }
+  .verdict-right h4 { color: var(--pink); font-size: 15px; margin-bottom: 14px; }
+  .check-list { list-style: none; }
+  .check-list li {
+    display: flex; gap: 10px; align-items: flex-start;
+    font-size: 13px; color: rgba(247,243,232,0.9);
+    padding: 10px 0; border-bottom: 1px solid rgba(247,243,232,0.1);
+    line-height: 1.65;
+  }
+  .check-list li:last-child { border-bottom: none; }
+  .check-list .ck-num {
+    width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+    background: var(--pink); color: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; margin-top: 2px;
+  }
+
+  /* ===== 同类公司（含投递入口） ===== */
+  .peer-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  }
+  .peer-card {
+    background: var(--card); border: 1.5px solid var(--green);
+    border-radius: 16px; padding: 22px 18px; text-align: center;
+  }
+  .peer-card .peer-emoji { font-size: 32px; margin-bottom: 10px; }
+  .peer-card .peer-name { font-size: 16px; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+  .peer-card .peer-desc { font-size: 12px; color: var(--muted); line-height: 1.65; }
+  .peer-card .peer-fit { font-size: 11px; color: var(--pink); margin-top: 8px; font-weight: 600; }
+  .peer-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 14px; background: var(--green); color: var(--pink);
+    font-size: 12px; font-weight: 600; padding: 8px 18px;
+    border-radius: 999px; text-decoration: none;
+    transition: all .2s; border: 1.5px solid var(--green);
+  }
+  .peer-link:hover {
+    background: var(--pink); color: var(--green);
+    transform: translateY(-2px); box-shadow: 0 3px 0 rgba(18,72,63,0.2);
+  }
+
+  /* ===== 来源区 ===== */
+  .sources { margin-top: 64px; padding-top: 32px; border-top: 2px dashed var(--green); }
+  .sources h3 { font-size: 18px; color: var(--green); margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+  .source-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .source-col {
+    background: var(--card); border-radius: 12px; padding: 20px;
+    border: 1.5px solid var(--green);
+  }
+  .source-col .sc-label {
+    font-size: 11px; font-weight: 700; padding: 3px 10px;
+    border-radius: 4px; display: inline-block; margin-bottom: 10px;
+  }
+  .sc-confirmed { background: var(--green); color: #fff; }
+  .sc-external { background: var(--pink); color: var(--green); }
+  .sc-pending { background: #E8E0D0; color: var(--muted); }
+  .source-col ul { list-style: none; }
+  .source-col li { font-size: 11.5px; color: var(--muted); padding: 4px 0; line-height: 1.6; }
+  .source-col a { color: var(--green); text-decoration: none; border-bottom: 1px dotted var(--green); }
+  .disclaimer {
+    margin-top: 20px; padding: 18px 22px;
+    background: rgba(18,72,63,0.05); border-radius: 10px;
+    font-size: 11.5px; color: var(--muted); line-height: 1.7;
+  }
+
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; }
+    .overview { grid-template-columns: repeat(2,1fr); }
+    .flywheel, .role-grid, .peer-grid, .source-grid { grid-template-columns: 1fr; }
+    .chart-row, .people-row, .opp-risk-grid, .verdict-box { grid-template-columns: 1fr; }
+    .flow-diagram { flex-direction: column; }
+    .flow-step { border-right: none; border-bottom: 2px dashed rgba(18,72,63,0.2); }
+    .nav { flex-wrap: wrap; max-width: 95vw; }
+    .nav a { font-size: 11px; padding: 5px 9px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== 固定胶囊导航：链接与各 section id 对应，板块名按实际微调 ===== -->
+<nav class="nav" id="nav">
+  <a href="#business">📦 业务</a>
+  <a href="#stage">📈 阶段</a>
+  <a href="#team">👥 团队</a>
+  <a href="#industry">🏆 位置</a>
+  <a href="#peers">🏢 同类</a>
+  <a href="#role">💼 岗位</a>
+  <a href="#opp-risk">⚖️ 风险</a>
+  <a href="#verdict">🎯 判断</a>
+</nav>
+
+<div class="container">
+
+  <!-- ===== Hero ===== -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="brand">CRAYON COMPANY GUIDE · {调研日期}</div>
+      <h1>从零看懂 <span class="underline">{公司名}</span></h1>
+      <p class="subtitle">{一句具体的、有信息量的副标题：说明这家公司的核心逻辑，以及它对 {岗位方向} 意味着什么。不要用套路化的空话。}</p>
+      <div class="hero-tags">
+        <span class="tag">🎯 {岗位方向}</span>
+        <span class="tag">📊 HTML 可视化报告</span>
+        <span class="tag">🏢 {阶段判断，如：成熟期 · AI 转型}</span>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <span class="hv-deco">✨</span>
+      <div class="hv-emoji">{场景 emoji}</div>
+      <div class="hv-title">{公司英文名/全称}</div>
+      <div class="hv-desc">
+        {3–5 行核心数据，每行一个维度，例如：}<br>
+        全球 X 万员工 · 覆盖 X 国家<br>
+        最新营收 / 估值 / 核心指标<br>
+        战略关键词或最新动作
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 6 卡速览：按公司实际情况调整 6 个维度 ===== -->
+  <div class="overview">
+    <div class="ov-item"><div class="ov-ic">📅</div><div class="ov-label">成立</div><div class="ov-value">{时间}</div></div>
+    <div class="ov-item"><div class="ov-ic">📍</div><div class="ov-label">总部</div><div class="ov-value">{地点}</div></div>
+    <div class="ov-item"><div class="ov-ic">👤</div><div class="ov-label">CEO</div><div class="ov-value">{姓名}</div></div>
+    <div class="ov-item"><div class="ov-ic">👥</div><div class="ov-label">员工</div><div class="ov-value">{口径}</div></div>
+    <div class="ov-item"><div class="ov-ic">💰</div><div class="ov-label">营收</div><div class="ov-value">{金额+日期}</div></div>
+    <div class="ov-item"><div class="ov-ic">📊</div><div class="ov-label">估值</div><div class="ov-value">{金额+日期}</div></div>
+  </div>
+
+  <!-- ===== 01 业务 ===== -->
+  <section class="section" id="business">
+    <div class="section-header">
+      <div class="section-icon">📦</div>
+      <div>
+        <div class="section-num">01 / BUSINESS</div>
+        <h2 class="section-title">从零看懂这家公司</h2>
+      </div>
+    </div>
+
+    <div class="dark-card" style="margin-bottom:18px;">
+      <h3>🏭 一句话商业模式</h3>
+      <p>{用大白话说明：公司靠什么产品/服务抓住什么用户，再如何变现。2–3 个段落，把业务逻辑讲透。}</p>
+      <p>{补充第二增长曲线或正在转型的新方向。}</p>
+      <p style="opacity:.75; font-size:13.5px;">打个比方：{用通俗比喻帮非商业背景用户理解，比喻必须保留，是核心内容。}</p>
+    </div>
+
+    <h3 style="color:var(--green); margin:28px 0 14px; font-size:17px;">🔄 业务飞轮：{标题，如"四大模块互相喂饭"}</h3>
+    <div class="flywheel">
+      <!-- 复制 fw-card，按公司实际模块数量调整（3–4 个） -->
+      <div class="fw-card">
+        <span class="fw-emoji">{emoji}</span>
+        <div class="fw-name">{模块名}</div>
+        <div class="fw-products">{代表产品/服务<br>该模块的作用}</div>
+        <div class="fw-note">{关键数据/增长逻辑}</div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-emoji">{emoji}</span>
+        <div class="fw-name">{模块名}</div>
+        <div class="fw-products">{代表产品/服务<br>该模块的作用}</div>
+        <div class="fw-note">{关键数据}</div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-emoji">{emoji}</span>
+        <div class="fw-name">{模块名}</div>
+        <div class="fw-products">{代表产品/服务<br>该模块的作用}</div>
+        <div class="fw-note">{关键数据}</div>
+      </div>
+      <div class="fw-card">
+        <span class="fw-emoji">{emoji}</span>
+        <div class="fw-name">{模块名}</div>
+        <div class="fw-products">{代表产品/服务<br>该模块的作用}</div>
+        <div class="fw-note">{关键数据}</div>
+      </div>
+    </div>
+
+    <div class="flow-diagram">
+      <!-- 复制 flow-step，按公司业务链路调整 3–4 步 -->
+      <div class="flow-step">
+        <div class="fs-num">1</div>
+        <div class="fs-emoji">{emoji}</div>
+        <div class="fs-title">{步骤名}</div>
+        <div class="fs-desc">{这一步做什么<br>关键动作/数据}</div>
+      </div>
+      <div class="flow-step">
+        <div class="fs-num">2</div>
+        <div class="fs-emoji">{emoji}</div>
+        <div class="fs-title">{步骤名}</div>
+        <div class="fs-desc">{这一步做什么<br>关键动作}</div>
+      </div>
+      <div class="flow-step">
+        <div class="fs-num">3</div>
+        <div class="fs-emoji">{emoji}</div>
+        <div class="fs-title">{步骤名}</div>
+        <div class="fs-desc">{这一步做什么<br>关键动作}</div>
+      </div>
+    </div>
+
+    <div class="chart-row">
+      <!-- 图表 1：收入构成环形图（角度按占比换算，360deg=100%） -->
+      <div class="chart-card">
+        <div class="chart-title"><span class="ic">💵</span>收入来源构成（{口径，如：媒体估算}）</div>
+        <div class="donut-wrapper">
+          <div class="donut">
+            <div class="donut-center">
+              <div class="dc-num">{总营收}</div>
+              <div class="dc-label">{年份}</div>
+            </div>
+          </div>
+          <div class="legend">
+            <div class="legend-item"><span class="legend-dot" style="background:var(--green)"></span><span class="l-name">{分类}</span><span class="l-val">{占比}</span></div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--pink)"></span><span class="l-name">{分类}</span><span class="l-val">{占比}</span></div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--blue)"></span><span class="l-name">{分类}</span><span class="l-val">{占比}</span></div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--yellow)"></span><span class="l-name">{分类}</span><span class="l-val">{占比}</span></div>
+          </div>
+        </div>
+        <div class="chart-note">{解读：哪个是最大收入来源、各板块增速、未来变化趋势。}</div>
+      </div>
+      <!-- 图表 2：进度条对比（如地域/业务结构变化） -->
+      <div class="chart-card">
+        <div class="chart-title"><span class="ic">🌍</span>{对比主题，如：国内 vs 海外}</div>
+        <div class="progress-list" style="margin-top:16px;">
+          <div class="progress-item">
+            <div class="pr-head"><span class="pr-name">{指标名}</span><span class="pr-val">{值}</span></div>
+            <div class="progress-track"><div class="progress-fill pink" style="width:{百分比}%"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="pr-head"><span class="pr-name">{指标名}</span><span class="pr-val">{值}</span></div>
+            <div class="progress-track"><div class="progress-fill pink" style="width:{百分比}%"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="pr-head"><span class="pr-name">{指标名}</span><span class="pr-val">{值}</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:{百分比}%"></div></div>
+          </div>
+        </div>
+        <div class="chart-note">{解读：趋势、核心驱动力、含义。}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="ic">💳</span>谁在为{公司名}付钱？{数量，如：四类付费方}</h3>
+      <div class="progress-list">
+        <div class="progress-item">
+          <div class="pr-head"><span class="pr-name">{付费方类型：具体数据和金额}</span><span class="pr-val">{地位，如：最大收入}</span></div>
+        </div>
+        <div class="progress-item">
+          <div class="pr-head"><span class="pr-name">{付费方类型：具体数据}</span><span class="pr-val">{地位}</span></div>
+        </div>
+        <div class="progress-item">
+          <div class="pr-head"><span class="pr-name">{付费方类型：具体数据}</span><span class="pr-val">{地位}</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 02 阶段 ===== -->
+  <section class="section" id="stage">
+    <div class="section-header">
+      <div class="section-icon">📈</div>
+      <div>
+        <div class="section-num">02 / STAGE</div>
+        <h2 class="section-title">公司阶段、资本与转型势能</h2>
+      </div>
+    </div>
+
+    <!-- 柱状图：营收趋势（bar 高度按数值比例，最高约 125px） -->
+    <div class="chart-card" style="margin-bottom:18px;">
+      <div class="chart-title"><span class="ic">📊</span>营收增长趋势（{单位}，{口径}）</div>
+      <div class="bar-chart">
+        <div class="bar-group">
+          <div class="bar green" style="height:{px}px;"><span class="bar-val">{值}</span></div>
+          <div class="bar-label">{年份}</div>
+        </div>
+        <div class="bar-group">
+          <div class="bar green" style="height:{px}px;"><span class="bar-val">{值}</span></div>
+          <div class="bar-label">{年份}</div>
+        </div>
+        <div class="bar-group">
+          <div class="bar pink" style="height:{px}px;"><span class="bar-val">{值}</span></div>
+          <div class="bar-label">{年份}</div>
+        </div>
+      </div>
+      <div class="chart-note">{解读：增速、增长引擎切换、在同行业中的位置。}</div>
+    </div>
+
+    <div class="chart-row">
+      <div class="dark-card">
+        <h3>📈 阶段判断：{阶段，如：成熟期 + AI 转型}</h3>
+        <p style="font-size:14px; opacity:.92">{阶段判断和依据。}</p>
+        <div class="timeline" style="margin-top:16px;">
+          <div class="tl-item">
+            <div class="tl-dot">📅</div>
+            <div class="tl-year">{时间段}</div>
+            <div class="tl-text">{阶段事件}</div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot">🌍</div>
+            <div class="tl-year">{时间段}</div>
+            <div class="tl-text">{阶段事件}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title"><span class="ic">💰</span>{投入主题，如：AI 投入核心指标}</div>
+        <div class="progress-list">
+          <div class="progress-item">
+            <div class="pr-head"><span class="pr-name">{指标名}</span><span class="pr-val">{值}</span></div>
+            <div class="progress-track"><div class="progress-fill" style="width:{百分比}%"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="pr-head"><span class="pr-name">{指标名}</span><span class="pr-val">{值}</span></div>
+            <div class="progress-track"><div class="progress-fill pink" style="width:{百分比}%"></div></div>
+          </div>
+        </div>
+        <div class="chart-note">{解读：数字背后的战略含义，是主动投入还是被动承压。}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="ic">🏦</span>融资、所有权与上市状态</h3>
+      <p style="font-size:14px; color:var(--muted); line-height:1.75;">{最新估值、融资/贷款、上市状态、关键动作。}</p>
+      <p style="font-size:12.5px; color:var(--risk); margin-top:10px;">
+        ⚠️ {对求职者的提示：估值不等于期权价值、未上市流动性风险等。}
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== 03 团队 ===== -->
+  <section class="section" id="team">
+    <div class="section-header">
+      <div class="section-icon">👥</div>
+      <div>
+        <div class="section-num">03 / TEAM</div>
+        <h2 class="section-title">创始人、团队规模与治理</h2>
+      </div>
+    </div>
+
+    <div class="people-row">
+      <div class="person-card">
+        <div class="person-avatar">👤</div>
+        <div class="person-info">
+          <div class="p-name">{姓名}</div>
+          <div class="p-title">{身份，如：创始人 / 董事长}</div>
+          <div class="p-desc">{教育背景、关键经历、当前角色、近期关注点。}</div>
+        </div>
+      </div>
+      <div class="person-card">
+        <div class="person-avatar">👤</div>
+        <div class="person-info">
+          <div class="p-name">{姓名}</div>
+          <div class="p-title">{身份，如：CEO}</div>
+          <div class="p-desc">{背景、履历、管理风格、最新战略表态。}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-row" style="margin-top:18px;">
+      <div class="card">
+        <h3><span class="ic">🏢</span>组织架构：{数量，如：六大业务板块}</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <div style="background:var(--pink-soft); padding:9px 12px; border-radius:8px; font-size:13px; color:var(--green); font-weight:600;">{板块}</div>
+          <div style="background:var(--pink-soft); padding:9px 12px; border-radius:8px; font-size:13px; color:var(--green); font-weight:600;">{板块}</div>
+        </div>
+        <p style="font-size:12px; color:var(--muted); margin-top:12px;">{近期组织调整、与岗位方向相关的部门地位。}</p>
+      </div>
+      <div class="card">
+        <h3><span class="ic">📏</span>管理文化与员工口径</h3>
+        <div class="progress-list">
+          <div class="progress-item">
+            <div class="pr-head"><span class="pr-name">{文化关键词，如：Context over Control}</span></div>
+            <div class="pr-head"><span style="font-size:12px; color:var(--muted)">{解释}</span></div>
+          </div>
+          <div class="progress-item">
+            <div class="pr-head"><span class="pr-name">员工规模</span><span class="pr-val">{口径}</span></div>
+            <div class="pr-head"><span style="font-size:12px; color:var(--muted)">{不同来源的口径差异}</span></div>
+          </div>
+        </div>
+        <p style="font-size:12px; color:var(--muted); margin-top:12px;">{匿名评价仅作线索：正面/负面集中点，注明团队差异大。}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 04 行业位置 ===== -->
+  <section class="section" id="industry">
+    <div class="section-header">
+      <div class="section-icon">🏆</div>
+      <div>
+        <div class="section-num">04 / POSITION</div>
+        <h2 class="section-title">行业位置与真实差异</h2>
+      </div>
+    </div>
+
+    <div class="chart-card" style="margin-bottom:18px;">
+      <div class="chart-title"><span class="ic">📊</span>{评分/排名主题及来源}</div>
+      <div class="progress-list">
+        <div class="progress-item">
+          <div class="pr-head"><span class="pr-name">{公司} · {产品}</span><span class="pr-val">{分数}</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:{分数}%"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="pr-head"><span class="pr-name">{竞品}</span><span class="pr-val">{分数}</span></div>
+          <div class="progress-track"><div class="progress-fill pink" style="width:{分数}%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-row">
+      <div class="card">
+        <h3><span class="ic">⚔️</span>真实差异化机制</h3>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <div style="width:34px; height:34px; border-radius:9px; background:var(--pink-soft); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0;">{emoji}</div>
+            <div>
+              <div style="font-size:13.5px; font-weight:700; color:var(--green)">{差异点名}</div>
+              <div style="font-size:12px; color:var(--muted); line-height:1.6;">{为什么对手不容易复制}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="border-color:var(--risk)">
+        <h3 style="color:var(--risk)"><span class="ic">⚠️</span>哪些"第一"要打问号</h3>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <div style="width:34px; height:34px; border-radius:9px; background:var(--risk-soft); display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0;">{emoji}</div>
+            <div>
+              <div style="font-size:13.5px; font-weight:700; color:var(--risk)">{需要澄清的点}</div>
+              <div style="font-size:12px; color:var(--muted); line-height:1.6;">{真实情况}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 05 同类公司（peer-link 投递入口必须保留，需先搜索确认官方招聘 URL） ===== -->
+  <section class="section" id="peers">
+    <div class="section-header">
+      <div class="section-icon">🏢</div>
+      <div>
+        <div class="section-num">05 / PEERS</div>
+        <h2 class="section-title">同类可投公司</h2>
+      </div>
+    </div>
+    <div class="peer-grid">
+      <div class="peer-card">
+        <div class="peer-emoji">{emoji}</div>
+        <div class="peer-name">{公司名}</div>
+        <div class="peer-desc">{核心产品/能力<br>一句话定位}</div>
+        <div class="peer-fit">适合{什么样的人}</div>
+        <a class="peer-link" href="{官方招聘 URL，需搜索确认}" target="_blank" rel="noopener">去投递 →</a>
+      </div>
+      <div class="peer-card">
+        <div class="peer-emoji">{emoji}</div>
+        <div class="peer-name">{公司名}</div>
+        <div class="peer-desc">{核心产品/能力<br>一句话定位}</div>
+        <div class="peer-fit">适合{什么样的人}</div>
+        <a class="peer-link" href="{官方招聘 URL}" target="_blank" rel="noopener">去投递 →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 06 岗位 ===== -->
+  <section class="section" id="role">
+    <div class="section-header">
+      <div class="section-icon">💼</div>
+      <div>
+        <div class="section-num">06 / ROLE</div>
+        <h2 class="section-title">{岗位方向}意味着什么</h2>
+      </div>
+    </div>
+
+    <div class="role-grid">
+      <!-- 复制 role-card，每个在招/相关岗位一张；有 JD 时分析服务哪条业务链路、交付物、成长、风险 -->
+      <div class="role-card">
+        <div class="rc-top">
+          <div class="rc-icon">{emoji}</div>
+          <div class="rc-name">{岗位名}</div>
+        </div>
+        <div class="rc-team">📍 {所属团队/业务线}</div>
+        <div class="rc-desc">{岗位职责、服务的业务链路、要求、成长路径、风险。3–5 行，不要只复述 JD。}</div>
+        <div class="rc-skills">
+          <span class="rc-skill">{技能标签}</span>
+          <span class="rc-skill">{技能标签}</span>
+        </div>
+      </div>
+      <div class="role-card">
+        <div class="rc-top">
+          <div class="rc-icon">{emoji}</div>
+          <div class="rc-name">{岗位名}</div>
+        </div>
+        <div class="rc-team">📍 {团队}</div>
+        <div class="rc-desc">{岗位分析。}</div>
+        <div class="rc-skills">
+          <span class="rc-skill">{标签}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 07 机会 / 风险 ===== -->
+  <section class="section" id="opp-risk">
+    <div class="section-header">
+      <div class="section-icon">⚖️</div>
+      <div>
+        <div class="section-num">07 / RISK & OPPORTUNITY</div>
+        <h2 class="section-title">机会与风险</h2>
+      </div>
+    </div>
+
+    <div class="opp-risk-grid">
+      <div class="or-col opp">
+        <h3>✅ 对求职者的机会</h3>
+        <div class="or-card">
+          <div class="or-ic">{emoji}</div>
+          <div>
+            <div class="or-title">{机会标题}</div>
+            <div class="or-desc">{具体依据和数据，不要空泛地写"发展空间大"。}</div>
+          </div>
+        </div>
+      </div>
+      <div class="or-col risk">
+        <h3>⚠️ 风险、红旗与信息缺口</h3>
+        <div class="or-card risk">
+          <div class="or-ic">{emoji}</div>
+          <div>
+            <div class="or-title">{风险标题}</div>
+            <div class="or-desc">{依据、影响、以及它如何影响求职决策。}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 08 最终判断 ===== -->
+  <section class="section" id="verdict">
+    <div class="section-header">
+      <div class="section-icon">🎯</div>
+      <div>
+        <div class="section-num">08 / VERDICT</div>
+        <h2 class="section-title">最终判断</h2>
+      </div>
+    </div>
+
+    <div class="verdict-box">
+      <div class="verdict-left">
+        <div class="vl-emoji">🎯</div>
+        <div class="vl-label">求职判断</div>
+        <div class="vl-text">{值得继续了解 / 有条件继续 / 暂不建议优先投入}</div>
+        <div class="vl-desc">{完整判断理由：核心机会是什么、风险是否可核验。}</div>
+      </div>
+      <div class="verdict-right">
+        <h4>🔑 最关键的三个待确认事项</h4>
+        <ul class="check-list">
+          <li><span class="ck-num">1</span><span>{待确认事项 + 面试时怎么问}</span></li>
+          <li><span class="ck-num">2</span><span>{待确认事项 + 怎么问}</span></li>
+          <li><span class="ck-num">3</span><span>{待确认事项 + 怎么问}</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 来源区 ===== -->
+  <section class="sources">
+    <h3>📚 来源与证据分级</h3>
+    <div class="source-grid">
+      <div class="source-col">
+        <span class="sc-label sc-confirmed">已确认（一手资料）</span>
+        <ul>
+          <li>{官网、官方文档、正式 JD、监管披露等}</li>
+        </ul>
+      </div>
+      <div class="source-col">
+        <span class="sc-label sc-external">外部报道（媒体/数据库）</span>
+        <ul>
+          <li><a href="{URL}" target="_blank" rel="noopener">{媒体：标题/日期}</a></li>
+        </ul>
+      </div>
+      <div class="source-col">
+        <span class="sc-label sc-pending">待核验 / 推断</span>
+        <ul>
+          <li>{口径差异、未披露数据、团队层面信息}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <strong>免责声明：</strong>本报告基于公开信息整理，仅供求职参考，不构成投资建议、法律意见或 Offer 决策依据。财务数据如为媒体报道或第三方估算需注明。薪酬、期权、团队等具体条件以书面 Offer 和劳动合同为准。调研截至 {调研日期}，后续信息可能发生变化。
+    </div>
+  </section>
+
+</div>
+
+<!-- ===== JS：导航滚动效果 + 当前板块高亮 + 平滑滚动（保留） ===== -->
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('.nav a');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { rootMargin: '-80px 0px -60% 0px' });
+  sections.forEach(s => observer.observe(s));
+  navLinks.forEach(l => l.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelector(l.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+  }));
+</script>
+
+</body>
+</html>
